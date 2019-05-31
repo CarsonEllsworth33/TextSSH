@@ -1,4 +1,7 @@
+#!/bin/bash
 #define path to editor
-EditorPath="/Applications/TextEdit.app"
+
+EditorPath=/Applications/"Sublime Text.app"
 #attempt to open application at $EditorPath
-open  $EditorPath $1
+echo $EditorPath
+open -a "$EditorPath" $1
