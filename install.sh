@@ -22,8 +22,17 @@ case $osvalue in
       ;;
 esac
 
-#sets up a permanent alias for TextSSH
-echo 'alias TextSSH=". ~/Documents/TextSSH/TextEditOpen.sh"' >> $BASHFILE
-source $BASHFILE
-echo "!!SUCCESS!!"
-echo "!Please restart terminal to take effect!"
+#adding new line for prettyness
+echo ' ' >> $BASHFILE
+
+#sourcing file for command use
+echo "source ~/Documents/TextSSH/.TextEditOpen.sh" >> $BASHFILE
+
+if [ 1 == 1 ] #temp values
+then
+  source $BASHFILE
+  echo "!!SUCCESS!!"
+  echo "!Please restart terminal to take effect!"
+else
+  echo "try running file as sudo"
+fi
