@@ -27,6 +27,12 @@ echo ' ' >> $BASHFILE
 
 #sourcing file for command use
 echo "source ~/Documents/TextSSH/.TextEditOpen.sh" >> $BASHFILE
+echo export TEXTSSH_HOSTNAME=0 >> $BASHFILE
+echo "Input path to desired text editting application (e.g. /path/to/app)"
+read path_val
+echo export TEXTSSH_APP_PATH=$path_val >> $BASHFILE
+echo "making directory for use"
+mkdir ~/.TEXTSSH.d
 
 if [ 1 == 1 ] #temp values
 then

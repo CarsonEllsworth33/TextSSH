@@ -3,18 +3,15 @@
 function TextSSH(){
 
 while [ -n "$1" ]; do
-	echo "$1"
 	case "$1" in
 
 		-c) #will be used to copy files over from host
 			file="$2"
-			#add code here
-			shift
-		;; 
-		
-		-u) #will be used to upload files over to host
-			file="$2"
-			#add code here
+			#add code here to copy from ssh to secure 
+			scp $TEXTSSH_HOSTNAME:$file ~/.TEXTSSH.d
+			#echo "$TEXTSSH_HOSTNAME":"$file" ~/.TEXTSSH.d
+			#directory then open file
+			#open -a $TEXTSSH_APP_PATH $file
 			shift
 		;; 
 
@@ -27,31 +24,55 @@ while [ -n "$1" ]; do
 			shift
 			;;
 
+		-l) #will be used to list the files in the hidden directory
+			ls ~/.TEXTSSH.d
+		;; 
+
 		-p) #will be used for application path settup
 			app_path="$2"
-
 			#setting up env vars
-			export TEXTSSH_APP_PATH=$app_path
-			echo "TEXTSSH_APP_PATH set ->" $TEXTSSH_APP_PATH
-			shift
+
+			#check to see if app_path is empty
+			if [ "$app_path" == "" ]; then 
+				echo "Error: No path given"
+				echo "Usage: TextSSH -p 'path/to/application' "
+
+			elif [[ $app_path =~ ^-  ]]; then # comparison not working atm
+				echo "Error: No path given"
+				echo "Usage: TextSSH -p 'path/to/application' "
+
+		    else
+				export TEXTSSH_APP_PATH=$app_path
+				echo "TEXTSSH_APP_PATH set ->" $TEXTSSH_APP_PATH
+				shift
+		    fi
 			;;
 
-		-m) #make a local directory to hold copied files
-			dir_path="$2"
-			shift
-			;;
+		# -m) #make a local directory to hold copied files
+		# 	dir_path="$2"
+		# 	shift
+		# 	;;
 
 		-t) #test option
 			echo "this is just a test"
+		;;
+
+		-u) #will be used to upload files over to host
+			file="$2"
+			dest="$3"
+			#add code here to scp over old files and replace 
+			scp ~/.TEXTSSH.d/$file $TEXTSSH_HOSTNAME:$dest
+			#with the newly editted ones
 			shift
-			;;
-		--)
-        	shift # The double dash makes them parameters
+			shift
+		;; 
+
+		--) # The double dash makes them parameters
+			shift
         	break
         ;;
 
         *)
-			echo "breaking @" "$1"
 			break
 		;;
 		
@@ -59,15 +80,15 @@ while [ -n "$1" ]; do
 	shift
 done
 
-#define path to editor
+#Grab Editor Path from env variables
 EditorPath=$TEXTSSH_APP_PATH
-echo "entering for loop with" $1 "this param"
+file_path=~/.TEXTSSH.d/$file
 for file in $@; do
     #attempt to open application at $EditorPath
 	echo "attempting to open" $file
-	open -a "$EditorPath" $file
+	open -a "$EditorPath" $file_path
+
 done
-
-
+ 
 }
 
