@@ -1,4 +1,4 @@
-#!/bin/bash
+d#!/bin/bash
 
 function TextSSH(){
 
@@ -6,10 +6,12 @@ while [ -n "$1" ]; do
 	case "$1" in
 
 		-c) #will be used to copy files over from host
-			file="$2"
+			file_path="$2"
+			file=""
 			#add code here to copy from ssh to secure 
-			scp $TEXTSSH_HOSTNAME:$file ~/.TEXTSSH.d
-			#echo "$TEXTSSH_HOSTNAME":"$file" ~/.TEXTSSH.d
+			scp $TEXTSSH_HOSTNAME:\~/$file_path ~/.TEXTSSH.d
+			touch ~/.TEXTSSH.d/\.$file\.t
+			#echo "$TEXTSSH_HOSTNAME":\~/"$file" ~/.TEXTSSH.d
 			#directory then open file
 			#open -a $TEXTSSH_APP_PATH $file
 			shift
@@ -46,12 +48,7 @@ while [ -n "$1" ]; do
 				echo "TEXTSSH_APP_PATH set ->" $TEXTSSH_APP_PATH
 				shift
 		    fi
-			;;
-
-		# -m) #make a local directory to hold copied files
-		# 	dir_path="$2"
-		# 	shift
-		# 	;;
+		;;
 
 		-t) #test option
 			echo "this is just a test"
@@ -61,7 +58,7 @@ while [ -n "$1" ]; do
 			file="$2"
 			dest="$3"
 			#add code here to scp over old files and replace 
-			scp ~/.TEXTSSH.d/$file $TEXTSSH_HOSTNAME:$dest
+			scp ~/.TEXTSSH.d/$file $TEXTSSH_HOSTNAME:\~/$dest
 			#with the newly editted ones
 			shift
 			shift
@@ -82,8 +79,9 @@ done
 
 #Grab Editor Path from env variables
 EditorPath=$TEXTSSH_APP_PATH
-file_path=~/.TEXTSSH.d/$file
+
 for file in $@; do
+	file_path=~/.TEXTSSH.d/$file
     #attempt to open application at $EditorPath
 	echo "attempting to open" $file
 	open -a "$EditorPath" $file_path
