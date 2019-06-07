@@ -27,10 +27,14 @@ echo ' ' >> $BASHFILE
 
 #sourcing file for command use
 echo "source ~/Documents/TextSSH/.TextEditOpen.sh" >> $BASHFILE
-echo export TEXTSSH_HOSTNAME=0 >> $BASHFILE
+echo "Input the user and host for the desired ssh client (e.g. user@hostname or user@1.1.1.1)"
+read host_val
+echo export TEXTSSH_HOSTNAME=$host_val >> $BASHFILE
 echo "Input path to desired text editting application (e.g. /path/to/app)"
 read path_val
 echo export TEXTSSH_APP_PATH=$path_val >> $BASHFILE
+
+echo "if any mistakes were made providing either the application path or host name changes can be made to the $BASHFILE"
 echo "making directory for use"
 mkdir ~/.TEXTSSH.d
 
