@@ -8,12 +8,40 @@ while [ -n "$1" ]; do
 		-c) #will be used to copy files over from host
 			file_path="$2"
 			file=""
+
+			#this grabs the file name from the file path
+			file_string=""
+			for (( i="${#file_path}"; i>=0; i-- )); do
+				if [ "${file_path:$i-1:1}" == "/" ]; then
+					break
+				else
+					file_string+="${file_path:$i-1:1}"
+				fi
+			done
+			file=$(echo "$file_string" | rev)
+
+			#checks to see if a file is already present in .TESTSSH.d
+			if [ -f ~/.TEXTSSH.d/"$file" ]; then
+				#dont woory bout a thing
+				echo "you exist!"
+			else
+				#touch file to remember host and directory
+				echo "you dont exist"
+				touch ~/.TEXTSSH.d/"$file".tsh
+				echo "$TEXTSSH_HOSTNAME" >> ~/.TEXTSSH.d/"$file".tsh
+				echo #TO DO file path >> ~/.TEXTSSH.d/"$file".tsh
+			fi
+
 			#add code here to copy from ssh to secure 
-			scp $TEXTSSH_HOSTNAME:\~/$file_path ~/.TEXTSSH.d
-			touch ~/.TEXTSSH.d/\.$file\.t
+			#scp $TEXTSSH_HOSTNAME:\~/$file_path ~/.TEXTSSH.d
+			#touch ~/.TEXTSSH.d/\.$file\.t
 			#echo "$TEXTSSH_HOSTNAME":\~/"$file" ~/.TEXTSSH.d
 			#directory then open file
 			#open -a $TEXTSSH_APP_PATH $file
+
+
+			
+			echo $file
 			shift
 		;; 
 
