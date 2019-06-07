@@ -1,6 +1,6 @@
 d#!/bin/bash
 
-function TextSSH(){
+function textssh(){
 
 while [ -n "$1" ]; do
 	case "$1" in
@@ -29,6 +29,12 @@ while [ -n "$1" ]; do
 		-l) #will be used to list the files in the hidden directory
 			ls ~/.TEXTSSH.d
 		;; 
+
+		-lc) #will be used to edit files on the local machine
+			file_path=$2
+			open -a "$TEXTSSH_APP_PATH" "$file_path"
+			shift
+		;;
 
 		-p) #will be used for application path settup
 			app_path="$2"
