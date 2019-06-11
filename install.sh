@@ -2,7 +2,6 @@
 
 #assuming most users are linux
 BASHFILE=~/.bashrc
-
 # linux or mac
 echo "Linux (0) or mac (1) user:"
 read osvalue
@@ -26,17 +25,21 @@ esac
 echo ' ' >> $BASHFILE
 
 #sourcing file for command use
-echo "source ~/Documents/TextSSH/.TextEditOpen.sh" >> $BASHFILE
+echo "source /etc/TextSSH/.TextEditOpen.sh" >> $BASHFILE
 echo "Input the user and host for the desired ssh client (e.g. user@hostname or user@1.1.1.1)"
 read host_val
 echo export TEXTSSH_HOSTNAME=$host_val >> $BASHFILE
 echo "Input path to desired text editting application (e.g. /path/to/app)"
 read path_val
 echo export TEXTSSH_APP_PATH=$path_val >> $BASHFILE
-
+chmod u+x .TextEditOpen.sh
 echo "if any mistakes were made providing either the application path or host name changes can be made to the $BASHFILE"
 echo "making directory for use"
-mkdir ~/.TEXTSSH.d
+mkdir /etc/TextSSH.d
+chown "$SUDO_USER" /etc/TextSSH.d
+echo "$SUDO_USER"
+mv . /etc/TEXTSSH
+
 
 if [ 1 == 1 ] #temp values
 then

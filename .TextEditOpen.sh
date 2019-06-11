@@ -1,4 +1,4 @@
-d#!/bin/bash
+#!/bin/bash
 
 function textssh(){
 
@@ -6,42 +6,54 @@ while [ -n "$1" ]; do
 	case "$1" in
 
 		-c) #will be used to copy files over from host
-			file_path="$2"
-			file=""
+			file_path="$2" #full path of file
+			file=""		   #name of file
+			path_flag=0    #flag to diff between path to file and file
+			file_string="" #string to assemble file name
+			path_string="" #string to assemble path name
 
-			#this grabs the file name from the file path
-			file_string=""
+			#error checks for bad input
+			if [ "$file_path" == "" ]; then
+				echo "no file path given to copy from host"
+				continue
+			elif [ $file_path == ^- ]; then
+				echo "option $file_path is not a valid parameter to copy"
+				continue
+			fi
+
+			#picks apart the string to grab both file name and path
 			for (( i="${#file_path}"; i>=0; i-- )); do
-				if [ "${file_path:$i-1:1}" == "/" ]; then
-					break
-				else
+				if [ "${file_path:$i-1:1}" == "/"  -a  "$path_flag" == "0" ]; then
+					path_flag=1
+				elif [ "$path_flag" == "0" ]; then
 					file_string+="${file_path:$i-1:1}"
+				else
+					path_string+="${file_path:$i:1}"
 				fi
 			done
-			file=$(echo "$file_string" | rev)
 
-			#checks to see if a file is already present in .TESTSSH.d
-			if [ -f ~/.TEXTSSH.d/"$file" ]; then
+			#reverses the strings to put the names in proper order
+			file=$(echo "$file_string" | rev)
+			path_string=$(echo "$path_string" | rev)
+
+			#checks to see if a file is already present in TextSSH.d
+			if [ -f /etc/TextSSH.d/"$file" ]; then
 				#dont woory bout a thing
 				echo "you exist!"
 			else
 				#touch file to remember host and directory
 				echo "you dont exist"
-				touch ~/.TEXTSSH.d/"$file".tsh
-				echo "$TEXTSSH_HOSTNAME" >> ~/.TEXTSSH.d/"$file".tsh
-				echo #TO DO file path >> ~/.TEXTSSH.d/"$file".tsh
+				touch /etc/TextSSH.d/"$file".tsh
+				echo "$TEXTSSH_HOSTNAME" >> /etc/TextSSH.d/."$file".tsh
+				echo "$path_string" >> /etc/TextSSH.d/."$file".tsh
 			fi
 
 			#add code here to copy from ssh to secure 
-			#scp $TEXTSSH_HOSTNAME:\~/$file_path ~/.TEXTSSH.d
-			#touch ~/.TEXTSSH.d/\.$file\.t
-			#echo "$TEXTSSH_HOSTNAME":\~/"$file" ~/.TEXTSSH.d
-			#directory then open file
-			#open -a $TEXTSSH_APP_PATH $file
+			scp /etc/TextSSH.d/ "$TEXTSSH_HOSTNAME":"$file_path"
 
+			#open file
+			open -a "$TEXTSSH_APP_PATH" "$file"
 
-			
-			echo $file
 			shift
 		;; 
 
@@ -55,7 +67,7 @@ while [ -n "$1" ]; do
 			;;
 
 		-l) #will be used to list the files in the hidden directory
-			ls ~/.TEXTSSH.d
+			ls /etc/TextSSH.d
 		;; 
 
 		-lc) #will be used to edit files on the local machine
@@ -73,7 +85,8 @@ while [ -n "$1" ]; do
 				echo "Error: No path given"
 				echo "Usage: TextSSH -p 'path/to/application' "
 
-			elif [[ $app_path =~ ^-  ]]; then # comparison not working atm
+			#regex app_path to see if it is actually an option
+			elif [[ $app_path =~ ^-  ]]; then 
 				echo "Error: No path given"
 				echo "Usage: TextSSH -p 'path/to/application' "
 
@@ -92,7 +105,7 @@ while [ -n "$1" ]; do
 			file="$2"
 			dest="$3"
 			#add code here to scp over old files and replace 
-			scp ~/.TEXTSSH.d/$file $TEXTSSH_HOSTNAME:\~/$dest
+			scp /etc/TextSSH.d/$file $TEXTSSH_HOSTNAME:\~/$dest
 			#with the newly editted ones
 			shift
 			shift
@@ -115,7 +128,7 @@ done
 EditorPath=$TEXTSSH_APP_PATH
 
 for file in $@; do
-	file_path=~/.TEXTSSH.d/$file
+	file_path=/etc/TextSSH.d/$file
     #attempt to open application at $EditorPath
 	echo "attempting to open" $file
 	open -a "$EditorPath" $file_path
