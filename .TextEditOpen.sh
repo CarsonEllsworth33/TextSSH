@@ -32,27 +32,26 @@ while [ -n "$1" ]; do
 				fi
 			done
 
+
 			#reverses the strings to put the names in proper order
 			file=$(echo "$file_string" | rev)
 			path_string=$(echo "$path_string" | rev)
 
 			#checks to see if a file is already present in TextSSH.d
-			if [ -f /etc/TextSSH.d/"$file" ]; then
-				#dont woory bout a thing
-				echo "you exist!"
+			if [ -f /etc/TextSSH.d/"$file" -a -f /etc/TextSSH.d/."$file".tsh ]; then
+				host=$(head -n1 /etc/TextSSH.d/"$file".tsh)
+				path_to_origin=$(tail -n1 /etc/TextSSH.d/"$file".tsh)
+				scp /etc/TextSSH.d/ "$host":"$path_to_origin""$file"
 			else
 				#touch file to remember host and directory
-				echo "you dont exist"
-				touch /etc/TextSSH.d/"$file".tsh
-				echo "$TEXTSSH_HOSTNAME" >> /etc/TextSSH.d/."$file".tsh
+				touch /etc/TextSSH.d/."$file".tsh
+				echo "$TEXTSSH_HOSTNAME" > /etc/TextSSH.d/."$file".tsh
 				echo "$path_string" >> /etc/TextSSH.d/."$file".tsh
+				scp /etc/TextSSH.d/ "$TEXTSSH_HOSTNAME":"$file_path"
 			fi
 
-			#add code here to copy from ssh to secure 
-			scp /etc/TextSSH.d/ "$TEXTSSH_HOSTNAME":"$file_path"
-
 			#open file
-			open -a "$TEXTSSH_APP_PATH" "$file"
+			#open -a "$TEXTSSH_APP_PATH" "$file"
 
 			shift
 		;; 
@@ -136,4 +135,3 @@ for file in $@; do
 done
  
 }
-

@@ -25,7 +25,7 @@ esac
 echo ' ' >> $BASHFILE
 
 #sourcing file for command use
-echo "source /etc/TextSSH/.TextEditOpen.sh" >> $BASHFILE
+echo "source ~/Documents/TextSSH/.TextEditOpen.sh" >> $BASHFILE
 echo "Input the user and host for the desired ssh client (e.g. user@hostname or user@1.1.1.1)"
 read host_val
 echo export TEXTSSH_HOSTNAME=$host_val >> $BASHFILE
@@ -37,8 +37,9 @@ echo "if any mistakes were made providing either the application path or host na
 echo "making directory for use"
 mkdir /etc/TextSSH.d
 chown "$SUDO_USER" /etc/TextSSH.d
-echo "$SUDO_USER"
-mv . /etc/TEXTSSH
+mkdir /etc/TextSSH
+#mv ./.TextEditOpen.sh
+#mv ./* /etc/TextSSH
 
 
 if [ 1 == 1 ] #temp values
