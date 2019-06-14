@@ -15,6 +15,7 @@ while [ -n "$1" ]; do
 			#error checks for bad input
 			if [ "$file_path" == "" ]; then
 				echo "no file path given to copy from host"
+				shift
 				continue
 			elif [ $file_path == ^- ]; then
 				echo "option $file_path is not a valid parameter to copy"
@@ -41,17 +42,17 @@ while [ -n "$1" ]; do
 			if [ -f /etc/TextSSH.d/"$file" -a -f /etc/TextSSH.d/."$file".tsh ]; then
 				host=$(head -n1 /etc/TextSSH.d/"$file".tsh)
 				path_to_origin=$(tail -n1 /etc/TextSSH.d/"$file".tsh)
-				scp /etc/TextSSH.d/ "$host":"$path_to_origin""$file"
+				scp "$host":"$path_to_origin""$file" /etc/TextSSH.d/
 			else
 				#touch file to remember host and directory
 				touch /etc/TextSSH.d/."$file".tsh
 				echo "$TEXTSSH_HOSTNAME" > /etc/TextSSH.d/."$file".tsh
 				echo "$path_string" >> /etc/TextSSH.d/."$file".tsh
-				scp /etc/TextSSH.d/ "$TEXTSSH_HOSTNAME":"$file_path"
+				scp "$TEXTSSH_HOSTNAME":"$file_path" /etc/TextSSH.d/
 			fi
 
 			#open file
-			#open -a "$TEXTSSH_APP_PATH" "$file"
+			open -a "$TEXTSSH_APP_PATH" /etc/TextSSH.d/"$file"
 
 			shift
 		;; 
@@ -102,11 +103,22 @@ while [ -n "$1" ]; do
 
 		-u) #will be used to upload files over to host
 			file="$2"
-			dest="$3"
-			#add code here to scp over old files and replace 
-			scp /etc/TextSSH.d/$file $TEXTSSH_HOSTNAME:\~/$dest
-			#with the newly editted ones
-			shift
+
+			if [ -f /etc/TextSSH.d/."$file".tsh ]; then
+				#grab head and tail
+				source=$(head -n1 /etc/TextSSH.d/."$file".tsh)
+				file_path=$(tail -n1 /etc/TextSSH.d)
+				scp /etc/TextSSH.d/$file $source:$file_path$file
+			else
+				#only need a destination if a tsh file has not been created
+				dest="$3"
+				if [ $dest =~ ^- -o "$dest" == "" ]; then
+					echo "No destination was provided for the file"
+					continue
+				fi 
+			    scp /etc/TextSSH.d/$file $TEXTSSH_HOSTNAME:\~/$dest$file
+				shift
+			fi
 			shift
 		;; 
 
