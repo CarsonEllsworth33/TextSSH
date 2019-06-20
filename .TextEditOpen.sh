@@ -107,7 +107,8 @@ while [ -n "$1" ]; do
 			if [ -f /etc/TextSSH.d/."$file".tsh ]; then
 				#grab head and tail
 				source=$(head -n1 /etc/TextSSH.d/."$file".tsh)
-				file_path=$(tail -n1 /etc/TextSSH.d)
+				file_path=$(tail -n1 /etc/TextSSH.d/."$file".tsh)
+				#echo "$file" "$source":"$file_path""$file"
 				scp /etc/TextSSH.d/$file $source:$file_path$file
 			else
 				#only need a destination if a tsh file has not been created
