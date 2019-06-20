@@ -55,7 +55,15 @@ while [ -n "$1" ]; do
 			open -a "$TEXTSSH_APP_PATH" /etc/TextSSH.d/"$file"
 
 			shift
-		;; 
+		;;
+
+		#deletes specified file in TextSSH.d
+		-d)
+		;;
+
+		#delets all files in TextSSH.d
+		-D)
+		;;
 
 		-h) #will be used for host setup
 			hostname="$2"
